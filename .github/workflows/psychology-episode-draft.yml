@@ -1,0 +1,45 @@
+name: Psychology episode draft and narration
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: Psychology topic for one original Short
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: psychology-episode-draft
+  cancel-in-progress: false
+
+jobs:
+  draft-and-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate script and Gemini narration
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TOPIC: ${{ inputs.topic }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "::error::GEMINI_API_KEY secret is missing"; exit 1; }
+          node channel/gemini-adapter.mjs "$TOPIC"
+
+      - name: Upload draft and narration for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: psychology-episode-draft
+          path: episodes/
+          if-no-files-found: error
+          retention-days: 7
