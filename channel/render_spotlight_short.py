@@ -188,16 +188,43 @@ def main():
     proc.stdin.close()
     err=proc.stderr.read().decode("utf-8","replace")
     if proc.wait()!=0: raise SystemExit("FFmpeg video render failed: "+err[-2500:])
-    run(["ffmpeg","-y","-i",str(silent),"-i",str(audio),"-map","0:v:0","-map","1:a:0","-c:v","copy","-c:a","aac","-b:a","192k","-shortest","-movflags","+faststart",str(final)])
+    run(["ffmpeg","-y","-i",str(silent),"-i",str(audio),"-map","0:v:0","-map","1:a:0","-vf","scale=720:1280:flags=lanczos","-c:v","libx264","-preset","veryfast","-crf","18","-pix_fmt","yuv420p","-c:a","aac","-b:a","192k","-shortest","-movflags","+faststart",str(final)])
     # Thumbnail
     thumb=draw_scene(2.0,0,0.25,"",title_font,cap_font)
     thumb.save(out/"thumbnail.png")
     (out/"sources.md").write_text("# Research sources\n\n"+ "\n".join(f"- [{s['title']}]({s['url']}) — {s['claim_supported']}" for s in SOURCES)+"\n")
     description=f"{episode['title']}\n\n{episode['narration']}\n\nSources:\n"+"\n".join(s["url"] for s in SOURCES)
     (out/"youtube-description.txt").write_text(description+"\n")
-    (out/"captions.srt").write_text("\n".join(f"{i+1}\n{int(c['start']//3600):02d}:{int(c['start']%3600//60):02d}:{c['start']%60:06.3f}".replace(".",",")+" --> "+f"{int(c['end']//3600):02d}:{int(c['end']%3600//60):02d}:{c['end']%60:06.3f}".replace(".",",")+"\n{c['text']}\n" for i,c in enumerate(captions)))
-    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":"720x1280","fps":FPS,"caption_cues":len(captions),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\n")
+    def srt_time(seconds):
+        total_ms = max(0, round(float(seconds) * 1000))
+        hours, remainder = divmod(total_ms, 3_600_000)
+        minutes, remainder = divmod(remainder, 60_000)
+        whole_seconds, milliseconds = divmod(remainder, 1000)
+        return f"{hours:02d}:{minutes:02d}:{whole_seconds:02d},{milliseconds:03d}"
+
+    srt_cues = []
+    for cue in captions:
+        cue_text = cue["text"].strip()
+        if cue_text:
+            srt_cues.append(
+                f"{len(srt_cues) + 1}\\n"
+                f"{srt_time(cue['start'])} --> {srt_time(cue['end'])}\\n"
+                f"{cue_text}"
+            )
+    if not srt_cues:
+        raise SystemExit("Caption generation produced no non-empty SRT cues")
+    srt_content = "\\n\\n".join(srt_cues) + "\\n"
+    if "{c['text']}" in srt_content:
+        raise SystemExit("SRT contains an unresolved caption template")
+    (out/"captions.srt").write_text(srt_content)
     probe=subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration:stream=codec_name,width,height","-of","json",str(final)],text=True)
+    probe_data=json.loads(probe)
+    video_stream=next((s for s in probe_data.get("streams",[]) if s.get("codec_name")=="h264"),None)
+    if not video_stream or video_stream.get("width") != 720 or video_stream.get("height") != 1280:
+        raise SystemExit(f"Final MP4 must be 720x1280 H.264; got {video_stream}")
+    if "{c['text']}" in srt_content or not srt_content.strip():
+        raise SystemExit("Final SRT is empty or contains an unresolved template")
+    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":f"{video_stream['width']}x{video_stream['height']}","fps":FPS,"caption_cues":len(srt_cues),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\\n")
     (out/"ffprobe.json").write_text(probe)
     print(json.dumps({"video":str(final),"duration":duration,"words":len(words),"captions":len(captions),"status":"REVIEW_REQUIRED"}))
 
