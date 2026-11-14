@@ -6,12 +6,12 @@ This directory stores channel configuration and production guidance. It never st
 
 - Language: English
 - Niche: psychology and human behaviour
-- Format: native 9:16 YouTube Shorts
-- Renderer style: B1 Minimal Hand-Drawn
+- Format: 9:16 portrait Shorts
+- Visual direction: minimal hand-drawn stick figures on warm, faint-grid paper
 - Target length: 45–60 seconds
 - Initial cadence: 3 videos per week
 - Target ongoing effort: no more than 10 minutes/day
-- Target service budget: ₹0/month (subject to free-tier quotas and availability)
+- Target service budget: ₹0/month, subject to free-tier quotas and availability
 - Publishing: manual upload by the channel owner; no YouTube OAuth or automatic publishing
 
 ## Gemini credential
@@ -22,44 +22,40 @@ https://github.com/gyyandas1-art/stickman-video-director/settings/secrets/action
 
 Never put the key in this directory, a commit, workflow log, artifact, or chat. A configured secret is not proof that a Gemini API call has succeeded.
 
-## Implemented stage 1: draft and narration
+## Sample build workflow
 
 The repository now includes:
-- `channel/gemini-adapter.mjs`: calls Gemini for a structured English psychology script and uses Gemini TTS to create a WAV narration.
-- `.github/workflows/psychology-episode-draft.yml`: manually triggered workflow; accepts a topic and uploads the script plus WAV as a 7-day artifact.
-- Unit tests for episode-draft validation.
+- `channel/gemini-adapter.mjs`: Gemini structured script generation and Gemini TTS narration.
+- `channel/render_spotlight_short.py`: speech alignment with faster-whisper, a procedural portrait stick-figure render, captions, thumbnail, source notes and upload description.
+- `.github/workflows/psychology-short-sample.yml`: builds a Spotlight Effect sample and uploads a 14-day artifact.
+- `skills/directing-stickman-videos/tests/gemini-adapter.test.mjs`: script validation tests.
 
-To run it from an Android phone:
+The sample uses a curated academic source list: Gilovich, Medvec & Savitsky (2000) and Gilovich & Savitsky (1999). The workflow verifies that the cited source URLs respond before packaging the video. Source verification does not by itself verify every generated sentence; review the narration and sources.
+
+### Run from an Android phone
+
 1. Open the repository's **Actions** tab.
-2. Select **Psychology episode draft and narration**.
-3. Tap **Run workflow**, enter a topic, and run it.
-4. Open the completed run and download the `psychology-episode-draft` artifact.
-5. Review the script and source URLs; do not assume the model's references are genuine without checking them.
+2. Select **Build psychology Short sample**.
+3. If the run has not already started from the latest push, tap **Run workflow**.
+4. Open the latest completed run.
+5. Download the `psychology-spotlight-effect-sample` artifact.
 
-Gemini free-tier quotas can change. Free-tier data may be used to improve Google's products; review the current Gemini API terms before sending any private or sensitive information. Do not send personal stories or identifiable third-party details to the model.
+The package contains an MP4, thumbnail, SRT captions, source notes, YouTube description and a technical report.
 
-## Not yet implemented
+## Important production boundary
 
-The adapter is only stage 1. It does **not** create a finished video. Remaining work:
-1. Verify source URLs and factual claims against primary references.
-2. Align captions to the actual generated narration.
-3. Create original story-specific B1 portrait artwork and native scene composition.
-4. Build and validate the complete B1 project manifest.
-5. Render the MP4 and run technical checks.
-6. Inspect the actual encoded video and audio; preserve the B1 visual-acceptance gate.
-7. Deliver a review preview and require your approval before a full production run.
+The sample renderer is a procedural hand-drawn stick-figure implementation; it is **not yet an accepted B1 reference-equivalent film** and is not a substitute for the installed B1 renderer's full visual acceptance process. The generated package is marked `REVIEW_REQUIRED` until the actual video, narration, captions, phone-size readability and factual claims have been inspected. Do not publish it merely because GitHub Actions succeeded.
 
-The workflow must not label an episode rendered or approved because an API call, workflow, or unit test succeeded. It must not fabricate an independent review.
+The broader B1 workflow also requires story-specific drawing, purposeful local animation, native portrait composition and comparison with the approved reference effects. A successful encode, unit test or automated quality report cannot create independent visual acceptance or your approval.
 
 ## Editorial safeguards
 
-- Cite factual claims in the episode's source notes.
-- Prefer established psychological concepts and distinguish evidence from interpretation.
-- No invented studies, statistics, quotations, diagnoses, or unsupported neuroscience claims.
-- Use original examples and a distinct scene plan for every episode.
+- No invented studies, statistics, quotations, diagnoses or unsupported neuroscience claims.
+- Use original everyday examples and a distinct scene plan for every episode.
+- Distinguish established research from interpretation.
 - Avoid repetitive, mass-produced scripts and identical scene templates.
 
-## Renderer runtime check
+## Runtime check
 
 From `skills/directing-stickman-videos`:
 
@@ -70,4 +66,4 @@ node scripts/autopilot.mjs workflow --style B1 --ratio 9:16
 npm test
 ```
 
-The runtime-check workflow validates dependencies and tests only. YouTube OAuth and automatic publishing are intentionally out of scope; you will upload approved MP4s manually.
+YouTube OAuth and automatic publishing are intentionally out of scope; you will upload reviewed MP4s manually.
