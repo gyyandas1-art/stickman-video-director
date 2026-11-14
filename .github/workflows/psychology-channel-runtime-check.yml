@@ -1,0 +1,52 @@
+name: Psychology channel runtime check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "channel/**"
+      - "skills/directing-stickman-videos/**"
+      - ".github/workflows/psychology-channel-runtime-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: psychology-channel-runtime-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runtime-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: skills/directing-stickman-videos/package-lock.json
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install runtime dependencies
+        working-directory: skills/directing-stickman-videos
+        run: npm ci
+
+      - name: Check renderer dependencies
+        working-directory: skills/directing-stickman-videos
+        run: node scripts/autopilot.mjs doctor
+
+      - name: Print B1 portrait workflow contract
+        working-directory: skills/directing-stickman-videos
+        run: node scripts/autopilot.mjs workflow --style B1 --ratio 9:16
+
+      - name: Run runtime tests
+        working-directory: skills/directing-stickman-videos
+        run: npm test
