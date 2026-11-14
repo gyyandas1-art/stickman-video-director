@@ -1,0 +1,173 @@
+{
+  "title": "The One More Rep Lie",
+  "premise": "A gym bro insists he has one rep left, but his body has already clocked out.",
+  "hook": "A muscular stickman confidently loads one absurdly oversized plate onto a barbell.",
+  "setup": "He tells his spotter he only needs one more rep.",
+  "escalation": [
+    "The bar barely moves.",
+    "He gives a confident thumbs-up while his legs shake.",
+    "The spotter adds encouragement; the bar sinks a little further.",
+    "The lifter's arms tremble and his expression changes from smug to terrified."
+  ],
+  "punchline": "He escapes the weight by casually pretending the set is over, then immediately asks for another plate.",
+  "characters": [
+    {
+      "id": "BRO",
+      "description": "Original muscular stickman gym regular; oversized rounded shoulders and arms, small simple head, expressive eyebrows, off-white body fill and thick irregular black outline.",
+      "palette": [
+        "off-white",
+        "ink black",
+        "muted olive-grey"
+      ]
+    },
+    {
+      "id": "SPOTTER",
+      "description": "Slimmer stickman gym partner with simple oval head, long limbs and a deadpan expression; same ink outline and off-white fill.",
+      "palette": [
+        "off-white",
+        "ink black",
+        "blue-grey"
+      ]
+    }
+  ],
+  "shots": [
+    {
+      "start": 0,
+      "end": 1.5,
+      "framing": "Low-angle medium shot on barbell and BRO",
+      "action": "BRO confidently slaps an oversized plate onto one end of the bar; the bar dips under the weight.",
+      "expression": "BRO smug grin; SPOTTER neutral.",
+      "prop_state": "Bar has one oversized plate on each side; bench is centered.",
+      "background": "Minimal gym with muted olive-grey wall and blue-grey bench.",
+      "transition": "Hard cut on plate impact.",
+      "character_ids": [
+        "BRO",
+        "SPOTTER"
+      ],
+      "on_screen_text": "ONE. MORE. REP."
+    },
+    {
+      "start": 1.5,
+      "end": 3.5,
+      "framing": "Side medium shot",
+      "action": "BRO lowers himself under the bar and grips it; SPOTTER steps into position behind the bench.",
+      "expression": "BRO overconfident; SPOTTER mildly skeptical.",
+      "prop_state": "Bar rests above BRO's chest; plates remain fixed.",
+      "background": "Same gym, same bench position.",
+      "transition": "Quick push-in.",
+      "character_ids": [
+        "BRO",
+        "SPOTTER"
+      ]
+    },
+    {
+      "start": 3.5,
+      "end": 5.5,
+      "framing": "Close-up on BRO's hands and bar",
+      "action": "BRO pushes; the bar rises only a few centimetres, then stops dead.",
+      "expression": "BRO's grin starts to disappear.",
+      "prop_state": "Bar flexes slightly; plates wobble but do not fall.",
+      "background": "Simplified gym backdrop.",
+      "transition": "Cut on stalled movement.",
+      "character_ids": [
+        "BRO"
+      ]
+    },
+    {
+      "start": 5.5,
+      "end": 7.5,
+      "framing": "Close-up on BRO's face",
+      "action": "BRO turns his eyes toward SPOTTER and gives a trembling thumbs-up without moving the bar.",
+      "expression": "Forced smile, one eyebrow twitching.",
+      "prop_state": "Bar remains stuck above chest.",
+      "background": "Muted flat backdrop.",
+      "transition": "Brief comedic hold, then cut.",
+      "character_ids": [
+        "BRO"
+      ]
+    },
+    {
+      "start": 7.5,
+      "end": 10.5,
+      "framing": "Wide side shot",
+      "action": "SPOTTER leans in to help; BRO's legs begin bicycling in the air as if running away.",
+      "expression": "SPOTTER concerned; BRO panicked.",
+      "prop_state": "Bar still stuck; bench unchanged.",
+      "background": "Same gym; keep spatial continuity.",
+      "transition": "Fast cut on first leg kick.",
+      "character_ids": [
+        "BRO",
+        "SPOTTER"
+      ]
+    },
+    {
+      "start": 10.5,
+      "end": 13,
+      "framing": "Extreme close-up on BRO's eyes and trembling mouth",
+      "action": "BRO's eyes widen; a sweat drop slides down as the bar dips a little.",
+      "expression": "Full panic.",
+      "prop_state": "Bar lowers slightly but remains supported; no injury shown.",
+      "background": "Minimal olive-grey.",
+      "transition": "Sudden smash cut.",
+      "character_ids": [
+        "BRO"
+      ]
+    },
+    {
+      "start": 13,
+      "end": 16,
+      "framing": "Wide shot",
+      "action": "BRO suddenly slides out from under the bar as if nothing happened, stands and dusts his hands; SPOTTER catches the bar.",
+      "expression": "BRO instantly smug again; SPOTTER deadpan.",
+      "prop_state": "Bar safely supported on rack; plates remain on bar.",
+      "background": "Same gym layout.",
+      "transition": "Hard cut timed to the bar rack clank.",
+      "character_ids": [
+        "BRO",
+        "SPOTTER"
+      ]
+    },
+    {
+      "start": 16,
+      "end": 18.5,
+      "framing": "Medium two-shot",
+      "action": "BRO points at the bar and confidently signals for another plate; SPOTTER slowly looks directly at camera.",
+      "expression": "BRO completely serious; SPOTTER exhausted disbelief.",
+      "prop_state": "Bar racked, ready for more weight.",
+      "background": "Same gym.",
+      "transition": "Hold on SPOTTER's look for punchline.",
+      "character_ids": [
+        "BRO",
+        "SPOTTER"
+      ],
+      "on_screen_text": "ADD ONE MORE"
+    }
+  ],
+  "audio": {
+    "voiceover": "Optional short dialogue: BRO: 'One more rep.' SPOTTER: 'You said that five minutes ago.'",
+    "music": "Use a cleared light comedic groove or no music; no unlicensed track.",
+    "effects": [
+      {
+        "time": 0.2,
+        "cue": "Heavy plate clank",
+        "rights_note": "Create original sound or use a properly licensed effect."
+      },
+      {
+        "time": 4,
+        "cue": "Short strained creak as bar stalls",
+        "rights_note": "Create original sound or use a properly licensed effect."
+      },
+      {
+        "time": 13.2,
+        "cue": "Metal rack clank as bar is safely re-racked",
+        "rights_note": "Create original sound or use a properly licensed effect."
+      },
+      {
+        "time": 17,
+        "cue": "Tiny comedic sting under SPOTTER reaction",
+        "rights_note": "Original or properly licensed audio only."
+      }
+    ]
+  },
+  "review_status": "DRAFT"
+}
