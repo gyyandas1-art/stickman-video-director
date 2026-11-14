@@ -9,6 +9,7 @@ import path from 'node:path';
 
 const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || 'gemini-3.8-flash';
 const TTS_MODEL = process.env.GEMINI_TTS_MODEL || 'gemini-3.8-flash-lite-tts';
+const FALLBACK_TEXT_MODEL = process.env.GEMINI_TEXT_FALLBACK_MODEL || 'gemini-3.7-flash';
 const API_ROOT = 'https://generativelanguage.googleapis.com/v1beta';
 const key = () => {
   const value = process.env.GEMINI_API_KEY;
@@ -17,18 +18,24 @@ const key = () => {
 };
 
 async function post(url, body) {
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {'content-type': 'application/json', 'x-goog-api-key': key()},
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(120000)
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {'content-type': 'application/json', 'x-goog-api-key': key()},
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(120000)
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (response.ok) return payload;
     const message = payload?.error?.message || `Gemini request failed with HTTP ${response.status}`;
-    throw new Error(message.slice(0, 1200));
+    const retryable = [429, 500, 502, 503, 504].includes(response.status) || /high demand|overloaded|temporarily unavailable/i.test(message);
+    if (!retryable || attempt === 3) throw new Error(message.slice(0, 1200));
+    const retryAfter = Number(response.headers.get('retry-after'));
+    const waitMs = Number.isFinite(retryAfter) && retryAfter > 0 ? Math.min(retryAfter * 1000, 20000) : [2000, 5000, 12000][attempt];
+    console.warn(`Gemini temporary availability/rate response (HTTP ${response.status}); retry ${attempt + 1}/3 in ${waitMs}ms.`);
+    await new Promise(resolve => setTimeout(resolve, waitMs));
   }
-  return payload;
+  throw new Error('Gemini request retries exhausted.');
 }
 
 function extractText(payload) {
@@ -95,10 +102,18 @@ Requirements:
 - The on_screen_text must be concise and readable on a phone.
 - Avoid claims that a single trick will reliably change someone's behaviour.`;
 
-  const payload = await post(`${API_ROOT}/models/${TEXT_MODEL}:generateContent`, {
+  const body = {
     contents: [{role: 'user', parts: [{text: prompt}]}],
     generationConfig: {responseMimeType: 'application/json', temperature: 0.65}
-  });
+  };
+  let payload;
+  try {
+    payload = await post(`${API_ROOT}/models/${TEXT_MODEL}:generateContent`, body);
+  } catch (error) {
+    if (TEXT_MODEL === FALLBACK_TEXT_MODEL || !/high demand|overloaded|temporarily unavailable|HTTP 503|HTTP 429/i.test(error.message)) throw error;
+    console.warn(`Primary Gemini text model unavailable; retrying with configured fallback ${FALLBACK_TEXT_MODEL}.`);
+    payload = await post(`${API_ROOT}/models/${FALLBACK_TEXT_MODEL}:generateContent`, body);
+  }
   return validateEpisode(parseJson(extractText(payload)));
 }
 
