@@ -100,7 +100,7 @@ def draw_scene(t, scene_idx, local, caption, title_font, cap_font):
         x=330+int(8*pulse); y=390
         d.ellipse((x-48,y-48,x+48,y+48),outline=RED,width=5)
         d.line((x+34,y+34,x+75,y+75),fill=RED,width=7)
-        d.text((75,670),"YOUR EXPERIENCE FEELS HUGE",font=cap_font,fill=RED)
+        draw_centered_wrapped(d,"YOUR EXPERIENCE FEELS HUGE",cap_font,240,655,max_width=420,fill=RED)
     elif scene_idx==2:
         stick_figure(d,240,315,0.72,pose=3,shirt=True,seed=3)
         # three distracted observers
@@ -131,7 +131,7 @@ def draw_scene(t, scene_idx, local, caption, title_font, cap_font):
     else:
         stick_figure(d,240,310,0.82,pose=2,shirt=False,seed=10)
         d.rounded_rectangle((70,590,410,690),radius=18,outline=RED,width=3,fill=(255,252,248))
-        d.text((112,620),"YOU ARE NOT THE WHOLE ROOM",font=cap_font,fill=INK)
+        draw_centered_wrapped(d,"YOU ARE NOT THE WHOLE ROOM",cap_font,240,600,max_width=300,fill=INK)
     # tiny motion indicator / hand-drawn accent
     d.arc((60,145,420,500),190,250,fill=(210,206,196),width=2)
     # captions: a single centered semantic line
