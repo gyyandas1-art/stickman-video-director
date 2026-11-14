@@ -22,21 +22,34 @@ https://github.com/gyyandas1-art/stickman-video-director/settings/secrets/action
 
 Never put the key in this directory, a commit, workflow log, artifact, or chat. A configured secret is not proof that a Gemini API call has succeeded.
 
-The intended API workflow is:
-- Gemini text model for an evidence-aware script and scene plan.
-- Gemini TTS for English narration.
-- Actual-audio word alignment for captions.
-- Original story-specific artwork and native portrait composition.
-- B1 rendering, technical checks, and human review.
-- Download the finished MP4 from a GitHub Actions artifact and upload it manually in YouTube Studio.
+## Implemented stage 1: draft and narration
+
+The repository now includes:
+- `channel/gemini-adapter.mjs`: calls Gemini for a structured English psychology script and uses Gemini TTS to create a WAV narration.
+- `.github/workflows/psychology-episode-draft.yml`: manually triggered workflow; accepts a topic and uploads the script plus WAV as a 7-day artifact.
+- Unit tests for episode-draft validation.
+
+To run it from an Android phone:
+1. Open the repository's **Actions** tab.
+2. Select **Psychology episode draft and narration**.
+3. Tap **Run workflow**, enter a topic, and run it.
+4. Open the completed run and download the `psychology-episode-draft` artifact.
+5. Review the script and source URLs; do not assume the model's references are genuine without checking them.
 
 Gemini free-tier quotas can change. Free-tier data may be used to improve Google's products; review the current Gemini API terms before sending any private or sensitive information. Do not send personal stories or identifiable third-party details to the model.
 
-## Production and approval boundary
+## Not yet implemented
 
-The upstream renderer is a production tool, not a topic-to-video service. The channel pipeline must explicitly create and validate every stage. It must not label an episode rendered or approved because an API call, workflow, or unit test succeeded.
+The adapter is only stage 1. It does **not** create a finished video. Remaining work:
+1. Verify source URLs and factual claims against primary references.
+2. Align captions to the actual generated narration.
+3. Create original story-specific B1 portrait artwork and native scene composition.
+4. Build and validate the complete B1 project manifest.
+5. Render the MP4 and run technical checks.
+6. Inspect the actual encoded video and audio; preserve the B1 visual-acceptance gate.
+7. Deliver a review preview and require your approval before a full production run.
 
-B1 portrait has a native-composition and visual-acceptance contract. The workflow must not bypass it or fabricate an independent review. The first usable episode should be delivered as a review preview; full production should follow only after the actual preview is reviewed and approved.
+The workflow must not label an episode rendered or approved because an API call, workflow, or unit test succeeded. It must not fabricate an independent review.
 
 ## Editorial safeguards
 
@@ -46,7 +59,7 @@ B1 portrait has a native-composition and visual-acceptance contract. The workflo
 - Use original examples and a distinct scene plan for every episode.
 - Avoid repetitive, mass-produced scripts and identical scene templates.
 
-## Current runtime check
+## Renderer runtime check
 
 From `skills/directing-stickman-videos`:
 
@@ -57,4 +70,4 @@ node scripts/autopilot.mjs workflow --style B1 --ratio 9:16
 npm test
 ```
 
-The existing runtime-check workflow validates dependencies and tests only. It does not yet generate a complete episode or upload/publish a video.
+The runtime-check workflow validates dependencies and tests only. YouTube OAuth and automatic publishing are intentionally out of scope; you will upload approved MP4s manually.
