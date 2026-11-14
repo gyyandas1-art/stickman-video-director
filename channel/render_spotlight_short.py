@@ -62,6 +62,21 @@ def stick_figure(draw, cx, cy, scale=1.0, pose=0, shirt=False, blush=False, seed
         draw.ellipse((cx-24*s,cy+5*s,cx-13*s,cy+12*s),fill=(238,160,148))
         draw.ellipse((cx+13*s,cy+5*s,cx+24*s,cy+12*s),fill=(238,160,148))
 
+def draw_centered_wrapped(draw, text, font, center_x, top_y, max_width=420, line_gap=4, fill=INK):
+    words=text.split()
+    lines=[]; current=""
+    for word in words:
+        candidate=(current+" "+word).strip()
+        if current and draw.textbbox((0,0),candidate,font=font)[2] > max_width:
+            lines.append(current); current=word
+        else:
+            current=candidate
+    if current: lines.append(current)
+    line_height=draw.textbbox((0,0),"Ag",font=font)[3]+line_gap
+    for index,line in enumerate(lines):
+        width=draw.textbbox((0,0),line,font=font)[2]
+        draw.text((center_x-width/2,top_y+index*line_height),line,font=font,fill=fill)
+
 def draw_scene(t, scene_idx, local, caption, title_font, cap_font):
     im=Image.new("RGB",(W,H),BG); d=ImageDraw.Draw(im)
     # subtle hand-drawn grid
@@ -93,7 +108,7 @@ def draw_scene(t, scene_idx, local, caption, title_font, cap_font):
             stick_figure(d,x,380,0.42,pose=0,seed=x)
             d.rounded_rectangle((x-25,560,x+25,625),radius=6,outline=(100,130,145),width=3)
             d.line((x-12,575,x+12,600),fill=(100,130,145),width=3)
-        d.text((90,680),"EVERYONE HAS THEIR OWN FOCUS",font=cap_font,fill=INK)
+        draw_centered_wrapped(d,"EVERYONE HAS THEIR OWN FOCUS",cap_font,240,665,max_width=420,fill=INK)
     elif scene_idx==3:
         # shirt experiment card
         d.rounded_rectangle((55,205,425,635),radius=22,outline=INK,width=4,fill=(255,254,250))
@@ -132,6 +147,20 @@ def draw_scene(t, scene_idx, local, caption, title_font, cap_font):
     return im
 
 def group_words(words):
+    # Whisper can split a hyphenated word across adjacent timestamp tokens
+    # (for example, "t" + "-shirt"). Join those before forming caption cues.
+    normalized=[]
+    for word in words:
+        token=word["word"].strip()
+        if token.startswith("-") and normalized:
+            normalized[-1]["word"]=normalized[-1]["word"].rstrip()+token
+            normalized[-1]["end"]=word["end"]
+        else:
+            normalized.append(dict(word))
+    words=normalized
+    for word in words:
+        if word["word"].strip().lower()=="t-shirt":
+            word["word"]="T-shirt"
     groups=[]; current=[]
     for w in words:
         token=w["word"].strip()
@@ -224,7 +253,7 @@ def main():
         raise SystemExit(f"Final MP4 must be 720x1280 H.264; got {video_stream}")
     if "{c['text']}" in srt_content or not srt_content.strip():
         raise SystemExit("Final SRT is empty or contains an unresolved template")
-    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":f"{video_stream['width']}x{video_stream['height']}","fps":FPS,"caption_cues":len(srt_cues),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\n")
+    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":f"{video_stream['width']}x{video_stream['height']}","source_canvas_resolution":f"{W}x{H}","upscaled":True,"fps":FPS,"caption_cues":len(srt_cues),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\n")
     (out/"ffprobe.json").write_text(probe)
     print(json.dumps({"video":str(final),"duration":duration,"words":len(words),"captions":len(captions),"status":"REVIEW_REQUIRED"}))
 
