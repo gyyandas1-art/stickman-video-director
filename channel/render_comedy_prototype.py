@@ -39,7 +39,11 @@ def character(im,cx,ground,kind,phase=0,face="neutral",scale=1,lean=0,arm=0):
     ex=head[0]; ey=head[1]
     d.ellipse((ex-16*scale,ey-5*scale,ex-8*scale,ey+4*scale),fill=INK)
     d.ellipse((ex+8*scale,ey-5*scale,ex+16*scale,ey+4*scale),fill=INK)
-    if face=="panic":
+    if face=="deadpan":
+        d.line((ex-20*scale,ey-13*scale,ex-7*scale,ey-10*scale),fill=INK,width=4)
+        d.line((ex+7*scale,ey-10*scale,ex+20*scale,ey-13*scale),fill=INK,width=4)
+        segment(d,(ex-15*scale,ey+18*scale),(ex+15*scale,ey+18*scale),4)
+    elif face=="panic":
         d.arc((ex-17*scale,ey+7*scale,ex+18*scale,ey+31*scale),180,360,fill=INK,width=4)
         d.ellipse((ex-5*scale,ey+13*scale,ex+5*scale,ey+26*scale),fill=INK)
     elif face=="smug":
@@ -104,6 +108,12 @@ def frame(t):
     for x in (155,565):
         d.rounded_rectangle((x-22,by-75,x+22,by+75),radius=12,fill=(54,60,62),outline=INK,width=7)
         d.line((x-12,by-62,x+12,by+62),fill=(105,119,124),width=5)
+    # The final gag is visible, not merely described by a caption: the spotter
+    # adds a second pair of plates while the lifter is still celebrating.
+    if t>=13.2:
+        for x in (112,608):
+            d.rounded_rectangle((x-15,by-57,x+15,by+57),radius=9,fill=(77,87,89),outline=INK,width=6)
+            d.line((x-8,by-46,x+8,by+46),fill=(139,151,148),width=4)
     # character staging
     if t<2.8:
         face="smug"; lean=0; strain=0
@@ -112,7 +122,7 @@ def frame(t):
     else:
         face="panic"; lean=8*math.sin(t*3); strain=1
     character(im,300,1090,"bro",t,face,1.12,lean,strain)
-    character(im,540,1090,"spotter",t,"neutral",.82,0,1 if t>6.2 else 0)
+    character(im,540,1090,"spotter",t,"deadpan" if t>=16 else "neutral",.82,0,1 if t>6.2 else 0)
     # caption strips with contrast and safe margins
     captions=[
       (0,2.0,"ONE MORE REP. EASY."),
@@ -122,7 +132,7 @@ def frame(t):
       (8.2,10.7,"BRO: NEVER BETTER."),
       (10.7,13.2,"HE ESCAPES THE BENCH..."),
       (13.2,16.0,"...THEN ASKS FOR MORE WEIGHT."),
-      (16.0,18.5,"SPOTTER HAS SEEN ENOUGH.")
+      (16.0,18.5,"SPOTTER: ABSOLUTELY NOT.")
     ]
     caption=next((s for a,b,s in captions if a<=t<b),"")
     d.rounded_rectangle((34,95,686,190),radius=20,fill=(29,32,29),outline=(211,202,180),width=3)
