@@ -136,16 +136,30 @@ function findAudioData(value) {
 export async function synthesizeNarration(text) {
   const payload = await post(`${API_ROOT}/interactions`, {
     model: TTS_MODEL,
-    input: text,
+    input: [{
+      type: 'user_input',
+      content: [{
+        type: 'text',
+        text,
+        annotations: [{
+          type: 'speech_metadata',
+          style: 'Clear, warm, conversational English narration. Natural pacing, precise pronunciation, and a thoughtful documentary tone.'
+        }]
+      }]
+    }],
     response_format: {type: 'audio'},
-    generation_config: {speech_config: [{voice: 'Kore', language: 'en-US'}]}
+    generation_config: {speech_config: [{voice: 'Kore'}]}
   });
-  const audio = findAudioData(payload.steps || payload);
-  if (!audio) throw new Error('Gemini TTS returned no audio data in the interaction steps.');
+  const audio = payload?.output_audio;
+  if (typeof audio?.data !== 'string') throw new Error('Gemini TTS response did not include output_audio.data.');
+  const mimeType = audio.mime_type || audio.mimeType || 'audio/wav';
+  if (mimeType !== 'audio/wav' && mimeType !== 'audio/x-wav') {
+    throw new Error(`Unexpected Gemini TTS audio format: ${mimeType}; expected WAV.`);
+  }
   const bytes = Buffer.from(audio.data, 'base64');
   if (bytes.length < 1000) throw new Error('Gemini TTS audio payload is unexpectedly small.');
-  if (audio.mimeType !== 'audio/wav' && audio.mimeType !== 'audio/x-wav') {
-    throw new Error(`Unexpected Gemini TTS audio format: ${audio.mimeType}; expected WAV.`);
+  if (bytes.toString('ascii', 0, 4) !== 'RIFF' || bytes.toString('ascii', 8, 12) !== 'WAVE') {
+    throw new Error('Gemini TTS returned audio without a valid WAV/RIFF header.');
   }
   return bytes;
 }
