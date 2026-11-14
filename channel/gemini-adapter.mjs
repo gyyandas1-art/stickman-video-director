@@ -140,6 +140,7 @@ async function main() {
   if (!topic) throw new Error('Usage: node channel/gemini-adapter.mjs "psychology topic"');
   const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'episode';
   const dir = path.resolve('episodes', `${new Date().toISOString().slice(0, 10)}-${slug}`);
+  await fs.mkdir(path.dirname(dir), {recursive: true});
   await fs.mkdir(dir, {recursive: false});
   const episode = await generateEpisode(topic);
   const narration = await synthesizeNarration(episode.narration);
