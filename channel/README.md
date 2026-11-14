@@ -1,6 +1,6 @@
 # Psychology Stickman Shorts — channel setup
 
-This directory stores the channel's editorial and production configuration. It does not contain API credentials.
+This directory stores channel configuration and production guidance. It never stores API credentials.
 
 ## Locked channel defaults
 
@@ -10,31 +10,43 @@ This directory stores the channel's editorial and production configuration. It d
 - Renderer style: B1 Minimal Hand-Drawn
 - Target length: 45–60 seconds
 - Initial cadence: 3 videos per week
-- Budget: ₹0/month
-- Human approval: mandatory before scheduling or publishing
+- Target ongoing effort: no more than 10 minutes/day
+- Target service budget: ₹0/month (subject to free-tier quotas and availability)
+- Publishing: manual upload by the channel owner; no YouTube OAuth or automatic publishing
 
-## Important production boundary
+## Gemini credential
 
-The upstream Stickman Video Director repository provides a renderer and detailed creative/acceptance contracts. It does **not** automatically turn a topic into a researched script, generated voice, original scene artwork, aligned captions, a completed B1 manifest, and an approved MP4. Those stages require project-local adapters and actual media generation. Do not mark an episode rendered or approved merely because a workflow or unit test passed.
+Store `GEMINI_API_KEY` only in GitHub Actions repository secrets:
 
-## Required credentials (add only through GitHub Actions repository secrets)
+https://github.com/gyyandas1-art/stickman-video-director/settings/secrets/actions
 
-- `GEMINI_API_KEY`: optional provider credential for a configured Gemini adapter. The current repository does not bundle a Gemini TTS/script adapter for this channel.
-- YouTube OAuth client/refresh-token material: required only if a YouTube Data API uploader is implemented. Never store OAuth JSON or tokens in this directory, commits, Actions artifacts, or logs.
+Never put the key in this directory, a commit, workflow log, artifact, or chat. A configured secret is not proof that a Gemini API call has succeeded.
 
-A secret name in documentation is not evidence that a secret has been configured or that a provider call works.
+The intended API workflow is:
+- Gemini text model for an evidence-aware script and scene plan.
+- Gemini TTS for English narration.
+- Actual-audio word alignment for captions.
+- Original story-specific artwork and native portrait composition.
+- B1 rendering, technical checks, and human review.
+- Download the finished MP4 from a GitHub Actions artifact and upload it manually in YouTube Studio.
 
-## Next implementation gates
+Gemini free-tier quotas can change. Free-tier data may be used to improve Google's products; review the current Gemini API terms before sending any private or sensitive information. Do not send personal stories or identifiable third-party details to the model.
 
-1. Implement and test the selected text-generation and TTS adapters.
-2. Implement original story-specific B1 portrait scene authoring; do not reuse the sample's poses/scenes as a template.
-3. Align captions to the actual generated voice track.
-4. Build and validate a complete B1 project manifest and render an MP4.
-5. Independently inspect actual encoded picture and sound against the B1 portrait and shared acceptance contracts.
-6. Add a persistent idempotent episode queue and only then schedule unattended production.
-7. Add YouTube OAuth upload/scheduling only after manual approval has been demonstrated.
+## Production and approval boundary
 
-## Local/cloud runtime check
+The upstream renderer is a production tool, not a topic-to-video service. The channel pipeline must explicitly create and validate every stage. It must not label an episode rendered or approved because an API call, workflow, or unit test succeeded.
+
+B1 portrait has a native-composition and visual-acceptance contract. The workflow must not bypass it or fabricate an independent review. The first usable episode should be delivered as a review preview; full production should follow only after the actual preview is reviewed and approved.
+
+## Editorial safeguards
+
+- Cite factual claims in the episode's source notes.
+- Prefer established psychological concepts and distinguish evidence from interpretation.
+- No invented studies, statistics, quotations, diagnoses, or unsupported neuroscience claims.
+- Use original examples and a distinct scene plan for every episode.
+- Avoid repetitive, mass-produced scripts and identical scene templates.
+
+## Current runtime check
 
 From `skills/directing-stickman-videos`:
 
@@ -45,4 +57,4 @@ node scripts/autopilot.mjs workflow --style B1 --ratio 9:16
 npm test
 ```
 
-The GitHub Actions workflow currently validates the runtime only. It intentionally does not claim to generate or publish videos until the missing production adapters and approval gates exist.
+The existing runtime-check workflow validates dependencies and tests only. It does not yet generate a complete episode or upload/publish a video.
