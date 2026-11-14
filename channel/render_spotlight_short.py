@@ -207,13 +207,13 @@ def main():
         cue_text = cue["text"].strip()
         if cue_text:
             srt_cues.append(
-                f"{len(srt_cues) + 1}\\n"
-                f"{srt_time(cue['start'])} --> {srt_time(cue['end'])}\\n"
+                f"{len(srt_cues) + 1}\n"
+                f"{srt_time(cue['start'])} --> {srt_time(cue['end'])}\n"
                 f"{cue_text}"
             )
     if not srt_cues:
         raise SystemExit("Caption generation produced no non-empty SRT cues")
-    srt_content = "\\n\\n".join(srt_cues) + "\\n"
+    srt_content = "\n\n".join(srt_cues) + "\n"
     if "{c['text']}" in srt_content:
         raise SystemExit("SRT contains an unresolved caption template")
     (out/"captions.srt").write_text(srt_content)
@@ -224,7 +224,7 @@ def main():
         raise SystemExit(f"Final MP4 must be 720x1280 H.264; got {video_stream}")
     if "{c['text']}" in srt_content or not srt_content.strip():
         raise SystemExit("Final SRT is empty or contains an unresolved template")
-    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":f"{video_stream['width']}x{video_stream['height']}","fps":FPS,"caption_cues":len(srt_cues),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\\n")
+    (out/"quality-report.json").write_text(json.dumps({"video":str(final.name),"duration_seconds":duration,"resolution":f"{video_stream['width']}x{video_stream['height']}","fps":FPS,"caption_cues":len(srt_cues),"aligned_words":len(words),"sources_curated":len(SOURCES),"visual_review":"PENDING_HUMAN_REVIEW","publish_status":"REVIEW_REQUIRED"},indent=2)+"\n")
     (out/"ffprobe.json").write_text(probe)
     print(json.dumps({"video":str(final),"duration":duration,"words":len(words),"captions":len(captions),"status":"REVIEW_REQUIRED"}))
 
