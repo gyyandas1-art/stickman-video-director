@@ -6,6 +6,7 @@ on:
       - feat/gemini-psychology-short-pipeline
     paths:
       - "channel/gemini-adapter.mjs"
+      - "channel/build_spotlight_sample.mjs"
       - "channel/render_spotlight_short.py"
       - ".github/workflows/psychology-short-sample.yml"
   workflow_dispatch:
@@ -48,7 +49,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           test -n "$GEMINI_API_KEY" || { echo "::error::GEMINI_API_KEY repository secret is missing"; exit 1; }
-          node channel/gemini-adapter.mjs "The Spotlight Effect: why we overestimate how much other people notice us. Use the original research by Gilovich, Medvec and Savitsky (2000), and explain its T-shirt and group-discussion experiments accurately. Do not overstate the effect or imply nobody notices us."
+          node channel/build_spotlight_sample.mjs
       - name: Render portrait video and align captions to actual speech
         run: |
           EPISODE_DIR="$(find episodes -name episode-draft.json -printf '%h\n' | sort | tail -n 1)"
