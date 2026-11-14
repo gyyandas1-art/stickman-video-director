@@ -36,15 +36,20 @@ A pipeline is not considered complete merely because a script, still images, or 
 
 ## Current implementation status
 
+The first renderer is intentionally a limited engineering prototype: it draws each frame procedurally and encodes a real MP4. It does not yet match the uploaded reference's painted character finish or acting quality. Its synthesized SFX are placeholders for timing, not a finished soundtrack. Never label its output publish-ready without visual/audio review.
+
 - [x] Channel direction changed from psychology to stickman comedy memes on a dedicated branch.
 - [x] Reference video inspected for duration, frame size, frame rate and visual design.
 - [x] Editorial and visual production specification added.
 - [ ] Topic/script generator adapted to comedy formats.
 - [ ] Reusable original character model and expression/pose library.
-- [ ] Scene animation and editing renderer adapted to this reference.
-- [ ] Audio, sound-effect and caption pipeline.
-- [ ] Automated quality checks and human review package.
-- [ ] End-to-end sample MP4 reviewed on a phone.
+- [x] First deterministic pose-animated 2D prototype renderer added (`render_comedy_prototype.py`); this is a procedural prototype, not the final character rig.
+- [x] Prototype MP4 workflow added with encode checks for 720×1280, 24 fps and H.264 output.
+- [x] Original synthesized impact SFX and timed captions included in the prototype (no voiceover or music yet).
+- [ ] Reusable original character model sheets, facial-expression library and reusable pose/limb rig.
+- [ ] Upgrade animation to stronger articulated acting, prop contact, camera cuts and more convincing physical comedy.
+- [ ] Voiceover, sound design and final audio mix.
+- [ ] Inspect decoded MP4 visually and acoustically; human phone-size review remains mandatory.
 
 The previous psychology implementation is not treated as the production pipeline for this channel. Its open pull request remains separate and is not merged into this branch.
 
