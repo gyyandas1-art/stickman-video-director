@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: psychology-short-sample
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-sample:
