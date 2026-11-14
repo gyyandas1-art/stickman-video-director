@@ -1,0 +1,63 @@
+name: Build psychology Short sample
+
+on:
+  push:
+    branches:
+      - feat/gemini-psychology-short-pipeline
+    paths:
+      - "channel/gemini-adapter.mjs"
+      - "channel/render_spotlight_short.py"
+      - ".github/workflows/psychology-short-sample.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: psychology-short-sample
+  cancel-in-progress: false
+
+jobs:
+  build-sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: skills/directing-stickman-videos/package-lock.json
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Install project dependencies
+        working-directory: skills/directing-stickman-videos
+        run: npm ci
+      - name: Install speech alignment dependencies
+        run: python -m pip install --upgrade pip faster-whisper pillow
+      - name: Generate psychology script and Gemini narration
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo "::error::GEMINI_API_KEY repository secret is missing"; exit 1; }
+          node channel/gemini-adapter.mjs "The Spotlight Effect: why we overestimate how much other people notice us. Use the original research by Gilovich, Medvec and Savitsky (2000), and explain its T-shirt and group-discussion experiments accurately. Do not overstate the effect or imply nobody notices us."
+      - name: Render portrait video and align captions to actual speech
+        run: |
+          EPISODE_DIR="$(find episodes -name episode-draft.json -printf '%h\n' | sort | tail -n 1)"
+          test -n "$EPISODE_DIR"
+          python channel/render_spotlight_short.py "$EPISODE_DIR"
+      - name: Upload sample publishing package
+        uses: actions/upload-artifact@v4
+        with:
+          name: psychology-spotlight-effect-sample
+          path: episodes/**/publish-package/
+          if-no-files-found: error
+          retention-days: 14
