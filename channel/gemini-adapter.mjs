@@ -150,8 +150,11 @@ export async function synthesizeNarration(text) {
     response_format: {type: 'audio'},
     generation_config: {speech_config: [{voice: 'Kore'}]}
   });
-  const audio = payload?.output_audio;
-  if (typeof audio?.data !== 'string') throw new Error('Gemini TTS response did not include output_audio.data.');
+  const audio = payload?.output_audio || findAudioData(payload?.steps || payload);
+  if (typeof audio?.data !== 'string') {
+    const stepTypes = Array.isArray(payload?.steps) ? payload.steps.map(step => step?.type || 'unknown').join(',') : 'none';
+    throw new Error(`Gemini TTS response contained no audio data. Top-level fields: ${Object.keys(payload || {}).join(',')}; step types: ${stepTypes}.`);
+  }
   const mimeType = audio.mime_type || audio.mimeType || 'audio/wav';
   if (mimeType !== 'audio/wav' && mimeType !== 'audio/x-wav') {
     throw new Error(`Unexpected Gemini TTS audio format: ${mimeType}; expected WAV.`);
