@@ -30,7 +30,9 @@ The repository now includes:
 - `.github/workflows/psychology-short-sample.yml`: builds a Spotlight Effect sample and uploads a 14-day artifact.
 - `skills/directing-stickman-videos/tests/gemini-adapter.test.mjs`: script validation tests.
 
-The sample uses a curated academic source list: Gilovich, Medvec & Savitsky (2000) and Gilovich & Savitsky (1999). The workflow verifies that the cited source URLs respond before packaging the video. Source verification does not by itself verify every generated sentence; review the narration and sources.
+The Spotlight Effect sample uses a fixed, editorially curated narration and source list: Gilovich, Medvec & Savitsky (2000) and Gilovich & Savitsky (1999). Its sample renderer uses a fixed six-scene storyboard; it does not yet turn arbitrary Gemini scene descriptions into topic-specific animation. Source URLs are supplied as references, not automatically validated by the renderer. Review the narration and source claims before publication.
+
+The separate **Psychology episode draft and narration** workflow accepts a topic and uses Gemini to create a structured 100–150-word script plus narration audio. That workflow currently produces a draft-and-voice artifact only; it does not yet render a topic-specific MP4. Do not mistake the fixed Spotlight Effect sample workflow for a fully general video renderer.
 
 ### Run from an Android phone
 
@@ -40,11 +42,11 @@ The sample uses a curated academic source list: Gilovich, Medvec & Savitsky (200
 4. Open the latest completed run.
 5. Download the `psychology-spotlight-effect-sample` artifact.
 
-The first Spotlight Effect package was successfully generated in [GitHub Actions run #43565938945](https://github.com/gyyandas1-art/stickman-video-director/actions/runs/43565938945). Its artifact is named `psychology-spotlight-effect-sample` and expires after 14 days. The package contains an MP4, thumbnail, SRT captions, source notes, YouTube description and a technical report.
+The first Spotlight Effect package was generated in [GitHub Actions run #43565938945](https://github.com/gyyandas1-art/stickman-video-director/actions/runs/43565938945). Newer corrected builds are tracked in the same workflow's run history. Artifacts are named `psychology-spotlight-effect-sample` and expire after 14 days. The package contains an MP4, thumbnail, SRT captions, source notes, YouTube description and a technical report.
 
 ## Important production boundary
 
-The sample renderer is a procedural hand-drawn stick-figure implementation; it is **not yet an accepted B1 reference-equivalent film** and is not a substitute for the installed B1 renderer's full visual acceptance process. The first artifact's technical render completed successfully, but the package deliberately records `REVIEW_REQUIRED`; the actual MP4 has not been independently inspected at phone size in this workflow. The generated package is marked `REVIEW_REQUIRED` until the actual video, narration, captions, phone-size readability and factual claims have been inspected. Do not publish it merely because GitHub Actions succeeded.
+The sample renderer is a procedural hand-drawn stick-figure implementation; it is **not yet an accepted B1 reference-equivalent film** and is not a substitute for the installed B1 renderer's full visual acceptance process. The package deliberately records `REVIEW_REQUIRED`; a successful build, correct codec and automated report do not establish visual acceptance. Inspect the actual MP4 at phone size, listen to the narration, check caption timing/readability and verify factual claims before publishing.
 
 The broader B1 workflow also requires story-specific drawing, purposeful local animation, native portrait composition and comparison with the approved reference effects. A successful encode, unit test or automated quality report cannot create independent visual acceptance or your approval.
 
