@@ -1,0 +1,74 @@
+{
+  "channel": {
+    "name": "Psychology Stickman Shorts",
+    "language": "en",
+    "niche": "psychology",
+    "format": "youtube-shorts",
+    "style": "B1",
+    "ratio": "9:16",
+    "width": 720,
+    "height": 1280,
+    "fps": 30,
+    "targetDurationSeconds": {
+      "min": 45,
+      "max": 60
+    },
+    "uploadsPerWeek": 3,
+    "timezone": "Asia/Kolkata",
+    "monthlyBudgetINR": 0
+  },
+  "editorial": {
+    "audience": "general audience",
+    "tone": [
+      "curious",
+      "clear",
+      "evidence-aware",
+      "non-sensational"
+    ],
+    "topics": [
+      "cognitive biases",
+      "human behaviour",
+      "social psychology",
+      "habits and decision making",
+      "attention and memory",
+      "emotional intelligence"
+    ],
+    "mustCiteFactualClaims": true,
+    "requireOriginalExamples": true,
+    "avoidMedicalDiagnosis": true,
+    "avoidUnsupportedNeuroscienceClaims": true,
+    "avoidFakeStudiesOrStatistics": true,
+    "avoidGuaranteedPsychologicalOutcomes": true,
+    "uniqueScriptAndScenePlanPerEpisode": true
+  },
+  "production": {
+    "narrationLanguage": "English",
+    "captionsRequired": true,
+    "soundEffectsRequired": true,
+    "originalStorySpecificArtworkRequired": true,
+    "voiceConsistencyRequired": true,
+    "nativePortraitCompositionRequired": true,
+    "automatedTechnicalChecksRequired": true,
+    "humanApprovalRequired": true,
+    "autoPublishWithoutApproval": false
+  },
+  "workflow": {
+    "states": [
+      "IDEA",
+      "RESEARCHED",
+      "SCRIPTED",
+      "VOICE_READY",
+      "SCENES_READY",
+      "RENDERED",
+      "QC_FAILED",
+      "NEEDS_APPROVAL",
+      "APPROVED",
+      "SCHEDULED",
+      "PUBLISHED"
+    ],
+    "maxAutomaticRetries": 1,
+    "neverRetryUncertainProviderJobs": true,
+    "keepSourceNotes": true,
+    "keepArtifactAndReviewEvidence": true
+  }
+}
