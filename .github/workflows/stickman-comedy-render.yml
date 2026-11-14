@@ -1,0 +1,51 @@
+name: Render stickman comedy prototype
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "channel/**"
+      - ".github/workflows/stickman-comedy-render.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install renderer dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          python -m pip install Pillow
+      - name: Validate episode contract
+        run: python channel/validate_episode.py channel/sample-episode.json
+      - name: Render MP4
+        run: python channel/render_comedy_prototype.py --episode channel/sample-episode.json --output out/one-more-rep-lie.mp4
+      - name: Verify encoded video
+        run: |
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate,pix_fmt -show_entries format=duration -of json out/one-more-rep-lie.mp4 > out/probe.json
+          python - <<'PY'
+          import json
+          p=json.load(open("out/probe.json"))
+          s=p["streams"][0]
+          assert (s["width"],s["height"]) == (720,1280), s
+          assert s["r_frame_rate"] == "24/1", s
+          assert s["pix_fmt"] == "yuv420p", s
+          assert float(p["format"]["duration"]) >= 8
+          print(json.dumps(p,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stickman-comedy-mp4-prototype
+          path: |
+            out/one-more-rep-lie.mp4
+            out/probe.json
+          retention-days: 14
