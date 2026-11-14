@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "id": "psy-001",
+      "topic": "The Spotlight Effect",
+      "hook": "People notice you far less than you think.",
+      "angle": "Explain how people overestimate how much others notice their appearance and mistakes.",
+      "status": "READY_FOR_RESEARCH"
+    },
+    {
+      "id": "psy-002",
+      "topic": "The Sunk Cost Fallacy",
+      "hook": "Why do we keep investing in something that's already failing?",
+      "angle": "Show how past investment can distort a current decision.",
+      "status": "READY_FOR_RESEARCH"
+    },
+    {
+      "id": "psy-003",
+      "topic": "The Zeigarnik Effect",
+      "hook": "Why can unfinished tasks stay on your mind?",
+      "angle": "Explain the commonly described memory effect carefully and avoid overstating the evidence.",
+      "status": "READY_FOR_RESEARCH"
+    },
+    {
+      "id": "psy-004",
+      "topic": "Confirmation Bias",
+      "hook": "Your brain may be filtering out evidence that challenges you.",
+      "angle": "Use a relatable example to explain selective attention to confirming evidence.",
+      "status": "READY_FOR_RESEARCH"
+    },
+    {
+      "id": "psy-005",
+      "topic": "The Bystander Effect",
+      "hook": "Why can a crowd make helping less likely?",
+      "angle": "Explain diffusion of responsibility with nuance and boundary conditions.",
+      "status": "READY_FOR_RESEARCH"
+    }
+  ]
+}
