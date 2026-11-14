@@ -22,6 +22,7 @@ def ease(x):
     x=max(0,min(1,x)); return x*x*(3-2*x)
 def mix(a,b,t): return a+(b-a)*t
 def segment(d,a,b,width=15,fill=INK):
+    width=max(1,int(width))
     d.line((a,b),fill=fill,width=width)
     r=width//2
     for p in (a,b): d.ellipse((p[0]-r,p[1]-r,p[0]+r,p[1]+r),fill=fill)
