@@ -40,11 +40,11 @@ The sample uses a curated academic source list: Gilovich, Medvec & Savitsky (200
 4. Open the latest completed run.
 5. Download the `psychology-spotlight-effect-sample` artifact.
 
-The package contains an MP4, thumbnail, SRT captions, source notes, YouTube description and a technical report.
+The first Spotlight Effect package was successfully generated in [GitHub Actions run #43565938945](https://github.com/gyyandas1-art/stickman-video-director/actions/runs/43565938945). Its artifact is named `psychology-spotlight-effect-sample` and expires after 14 days. The package contains an MP4, thumbnail, SRT captions, source notes, YouTube description and a technical report.
 
 ## Important production boundary
 
-The sample renderer is a procedural hand-drawn stick-figure implementation; it is **not yet an accepted B1 reference-equivalent film** and is not a substitute for the installed B1 renderer's full visual acceptance process. The generated package is marked `REVIEW_REQUIRED` until the actual video, narration, captions, phone-size readability and factual claims have been inspected. Do not publish it merely because GitHub Actions succeeded.
+The sample renderer is a procedural hand-drawn stick-figure implementation; it is **not yet an accepted B1 reference-equivalent film** and is not a substitute for the installed B1 renderer's full visual acceptance process. The first artifact's technical render completed successfully, but the package deliberately records `REVIEW_REQUIRED`; the actual MP4 has not been independently inspected at phone size in this workflow. The generated package is marked `REVIEW_REQUIRED` until the actual video, narration, captions, phone-size readability and factual claims have been inspected. Do not publish it merely because GitHub Actions succeeded.
 
 The broader B1 workflow also requires story-specific drawing, purposeful local animation, native portrait composition and comparison with the approved reference effects. A successful encode, unit test or automated quality report cannot create independent visual acceptance or your approval.
 
